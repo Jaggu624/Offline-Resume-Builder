@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Resume Builder</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+form, .resume {
+    background: white;
+    padding: 20px;
+    width: 460px;
+    border-radius: 8px;
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+}
+
+button {
+    margin-top: 15px;
+    width: 100%;
+    padding: 10px;
+    background: #007bff;
+    color: white;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.resume h3 {
+    margin-top: 15px;
+}
+
+ul {
+    margin-left: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+table, th, td {
+    border: 1px solid #333;
+}
+
+th, td {
+    padding: 8px;
+    text-align: center;
+}
+
+th {
+    background: #eaeaea;
+}
+
+/* Hide buttons while printing */
+@media print {
+    button {
+        display: none;
+    }
+    body {
+        background: white;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<h1>Resume Builder</h1>
+
+<div class="container">
+
+<form onsubmit="buildResume(event)">
+    <label>Name</label>
+    <input type="text" id="name" required>
+
+    <label>Email</label>
+    <input type="email" id="email" required>
+
+    <label>Phone</label>
+    <input type="text" id="phone">
+
+    <label>Skills</label>
+    <textarea id="skills" rows="4"></textarea>
+
+    <label>Experience</label>
+    <textarea id="experience" rows="4"></textarea>
+
+    <h3>Education Details</h3>
+
+    <label>Degree</label>
+    <input type="text" id="degree">
+
+    <label>Institution</label>
+    <input type="text" id="institution">
+
+    <label>Year</label>
+    <input type="text" id="year">
+
+    <label>Percentage / CGPA</label>
+    <input type="text" id="grade">
+
+    <button type="button" onclick="addEducation()">Add Education</button>
+    <button type="submit">Build Resume</button>
+</form>
+
+<div class="resume" id="resume" style="display:none;">
+    <h2 id="rName"></h2>
+    <p><b>Email:</b> <span id="rEmail"></span></p>
+    <p><b>Phone:</b> <span id="rPhone"></span></p>
+
+    <h3>Skills</h3>
+    <ul id="rSkills"></ul>
+
+    <h3>Experience</h3>
+    <p id="rExperience"></p>
+
+    <h3>Education</h3>
+    <table id="eduTable">
+        <tr>
+            <th>Degree</th>
+            <th>Institution</th>
+            <th>Year</th>
+            <th>Percentage / CGPA</th>
+        </tr>
+    </table>
+
+    <button onclick="downloadPDF()">Download Resume as PDF</button>
+</div>
+
+</div>
+
+<script>
+let educationData = [];
+
+function addEducation() {
+    if (!degree.value || !institution.value) {
+        alert("Please enter degree and institution");
+        return;
+    }
+
+    educationData.push({
+        degree: degree.value,
+        institution: institution.value,
+        year: year.value,
+        grade: grade.value
+    });
+
+    degree.value = institution.value = year.value = grade.value = "";
+    alert("Education added successfully!");
+}
+
+function buildResume(event) {
+    event.preventDefault();
+    resume.style.display = "block";
+
+    rName.innerText = name.value;
+    rEmail.innerText = email.value;
+    rPhone.innerText = phone.value;
+
+    // Skills as bullet points
+    rSkills.innerHTML = "";
+    skills.value.split("\n").forEach(skill => {
+        if (skill.trim()) {
+            let li = document.createElement("li");
+            li.innerText = skill;
+            rSkills.appendChild(li);
+        }
+    });
+
+    // Experience as paragraph
+    rExperience.innerText = experience.value;
+
+    // Education table
+    eduTable.innerHTML = `
+        <tr>
+            <th>Degree</th>
+            <th>Institution</th>
+            <th>Year</th>
+            <th>Percentage / CGPA</th>
+        </tr>
+    `;
+
+    educationData.forEach(e => {
+        let row = eduTable.insertRow();
+        row.insertCell(0).innerText = e.degree;
+        row.insertCell(1).innerText = e.institution;
+        row.insertCell(2).innerText = e.year;
+        row.insertCell(3).innerText = e.grade;
+    });
+}
+
+function downloadPDF() {
+    window.print();
+}
+</script>
+
+</body>
+</html>
